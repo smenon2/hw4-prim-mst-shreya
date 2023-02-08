@@ -45,18 +45,29 @@ class Graph:
         self.mst = None
         n = len(self.adj_mat)
 
+        # Initialize set that stores visited nodes
         visited = set()
+
+        # Setting arbitrary start node
         start = 0
         end = 0
+
+        # Initialize heap and mst
         heap = [(0, (start, end))]
         mst = np.zeros(self.adj_mat.shape)
 
+        # Loop through until visited set contains all nodes
         while len(visited) < n:
+            # Select the node in heap with least costly edge
             w, (x, y) = heapq.heappop(heap)
+
+            # If the destination node is not in visited, we can add it to the mst
             if y not in visited:
                 mst[x, y] = mst[y, x] = self.adj_mat[x, y]
                 visited.add(y)
 
+                # We will also add all neighbors (outgoing edges) to the heap
+                # We can find these by looking for edge weights that nonzero
                 for v in range(0, n):
                     edge_weight = self.adj_mat[y][v]
                     if edge_weight != 0:
