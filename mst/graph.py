@@ -2,6 +2,7 @@ import numpy as np
 import heapq
 from typing import Union
 
+
 class Graph:
 
     def __init__(self, adjacency_mat: Union[np.ndarray, str]):
@@ -17,7 +18,7 @@ class Graph:
             self.adj_mat = self._load_adjacency_matrix_from_csv(adjacency_mat)
         elif type(adjacency_mat) == np.ndarray:
             self.adj_mat = adjacency_mat
-        else: 
+        else:
             raise TypeError('Input must be a valid path or an adjacency matrix')
         self.mst = None
 
@@ -42,3 +43,24 @@ class Graph:
 
         """
         self.mst = None
+        n = len(self.adj_mat)
+
+        visited = set()
+        start = 0
+        end = 0
+        heap = [(0, (start, end))]
+        mst = np.zeros(self.adj_mat.shape)
+
+        while len(visited) < n:
+            w, (x, y) = heapq.heappop(heap)
+            if y not in visited:
+                mst[x, y] = mst[y, x] = self.adj_mat[x, y]
+                visited.add(y)
+
+                for v in range(0, n):
+                    edge_weight = self.adj_mat[y][v]
+                    if edge_weight != 0:
+                        heapq.heappush(heap, (edge_weight, (y, v)))
+
+        self.mst = mst
+
